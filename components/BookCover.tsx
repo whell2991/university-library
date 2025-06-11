@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
-
 import Image from "next/image";
 import BookCoverSVG from "./BookCoverSVG";
+import config from "@/lib/config";
 
 type BookCoverVariant = "extrasmall" | "small" | "medium" | "regular" | "wide";
 
@@ -17,7 +17,7 @@ interface Props {
   className?: string;
   variant?: BookCoverVariant;
   coverColor: string;
-  coverImage: string;
+  coverImage: string; // مثال: "books/covers/file.png"
 }
 
 const BookCover = ({
@@ -26,6 +26,12 @@ const BookCover = ({
   coverColor,
   coverImage,
 }: Props) => {
+  const imagekitEndpoint = config.env.imagekit.urlEndpoint;
+  const fallbackImage = "png.png";
+  const finalCoverImage =  coverImage || fallbackImage
+  const isFullUrl =
+    finalCoverImage.startsWith("http") || finalCoverImage.startsWith("https");
+  const imageUrl = isFullUrl ? coverImage : `${imagekitEndpoint}/${coverImage}`;
   return (
     <div
       className={cn(
@@ -40,7 +46,7 @@ const BookCover = ({
         style={{ left: "12%", width: "87.5%", height: "88%" }}
       >
         <Image
-          src={coverImage}
+          src={imageUrl}
           alt="Book Cover"
           fill
           className="rounded-sm object-fill"

@@ -2,8 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ["ik.imagekit.io"],
     remotePatterns: [
+      { protocol: "https", hostname: "ik.imagekit.io", pathname:"/walidhisham/**"},
       { protocol: "https", hostname: "placehold.co" },
       { protocol: "https", hostname: "m.media-amazon.com" },
     ],

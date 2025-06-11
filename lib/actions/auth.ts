@@ -3,7 +3,7 @@
 import { signIn } from "@/auth";
 import { db } from "@/database/drizzle";
 import { users } from "@/database/schema";
-import { hash } from "bcryptjs";
+// import { hash } from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import ratelimit from "../ratelimit";
@@ -40,7 +40,7 @@ export const signInWithCredentials = async (
 };
 
 export const signUp = async (params: AuthCredentials) => {
-  const { email, password, fullName, universityId, universityCard } = params;
+  const { email, password, fullName} = params;
 
   const existingUser = await db
     .select()
@@ -52,26 +52,24 @@ export const signUp = async (params: AuthCredentials) => {
     return { success: false, message: "User already exists with this email" };
   }
 
-  const hashedPassword = await hash(password, 10);
+  // const hashedPassword = await hash(password, 10);
 
   try {
-    const newUser = await db
-      .insert(users)
-      .values({
-        fullName,
-        email,
-        password: hashedPassword,
-        universityId,
-        universityCard,
-      });
+    // const newUser = await db.insert(users).values({
+    //   fullName,
+    //   email,
+    //   password: hashedPassword,
+    //   universityId,
+    //   universityCard,
+    // });
 
     await workflowClient.trigger({
-      url: `${config.env.prodApiEndpoint}/api/workflow/onboarding`,
+      url: `${config.env.prodApiEndpoint}/api/workflows/onboarding`,
       body: { email, fullName },
     });
 
     await signInWithCredentials({ email, password });
-    return { success: true, user: newUser };
+    return { success: true };  // فقط رجع نجاح بدون بيانات معقدة
   } catch (error) {
     console.log(error, "Error creating user");
     return { success: false, message: "Error creating user" };
